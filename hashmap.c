@@ -121,7 +121,8 @@ void insert_bucket(bucket_list * blist, bucket * bk) {
 		blist->tail = bk;
 	} else {
 		bk->prev = blist->tail;
-		blist->next = bk;
+		blist->tail->next = bk;
+		blist->tail = bk;
 	}
 }
 
