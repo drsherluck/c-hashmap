@@ -44,7 +44,7 @@ void delete_hashmap(HashMap *hm, void(*destroy_data)(void *));
 #endif
 
 #ifndef NEW_HASH
-
+#define NEW_HASH
 
 void set_hash_function(HashMap *hm, unsigned int (*hash_function)(const char *));
 

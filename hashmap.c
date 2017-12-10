@@ -242,16 +242,24 @@ void rehash(HashMap *hm) {
 		return;
 	}
 
-	bucket *temp = (bucket *)calloc(hm->key_space, sizeof(bucket));
-	bucket *old_data = hm->elements;
-	hm->elements = temp;	
+	HashMap *temp = create_hashmap(hm->key_space);
+	HashMap *old = hm;
+	hm = temp;
+	hm->hash = old->hash;
 
+	bucket *bk = NULL;
 	for (unsigned int i = 0; i < hm->key_space; i++) {
-		insert_data(hm, old_data[i].key, old_data[i].data, NULL);
-		free(old_data[i].key);
+		if (hm->elements[i] == NULL) {
+			continue;
+		}
+		bk = hm->elements[i]->head;
+		while (bk != NULL) {
+			insert_data(hm, bk->key, bk->data, NULL);
+			bk = bk->next;
+		}
 	}
 
-	free(old_data);
+	delete_hashmap(old);
 }
 
 /**
