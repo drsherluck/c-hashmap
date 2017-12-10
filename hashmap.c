@@ -61,9 +61,8 @@ bucket_list * create_bucketlist() {
 */
 bucket_list * get_bucket_list(HashMap *hm, const char * key) {
 	unsigned int h = hm->hash(key) % hm->key_space;
-	bucket_list *blist = hm->elements[h];
-	if (blist == NULL) {
-		blist = create_bucketlist();
+	if (hm->elements[h] == NULL) {
+		hm->elements[h] = create_bucketlist();
 	}
 	return blist;
 }
