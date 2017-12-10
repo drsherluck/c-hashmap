@@ -88,7 +88,7 @@ bucket * get_bucket(bucket_list *blist, const char * key) {
 /**
 	Deletes a bucket.
 */
-void delete_bucket(bucket *bk) {
+void delete_bucket(bucket_list *blist, bucket *bk) {
 	bucket *prev = bk->prev;
 	bucket *next = bk->next;
 
@@ -99,6 +99,13 @@ void delete_bucket(bucket *bk) {
 	} else if (prev != NULL && next != NULL) {
 		prev->next = next;
 		next->prev = prev;
+	}
+
+	if (blist->head == bk) {
+		blist->head = bk->next;
+	}
+	if (blist->tail == bk) {
+		blist->tail == bk->prev;
 	}
 
 	free(bk->key);
@@ -192,7 +199,7 @@ void remove_data(HashMap *hm, const char *key, void(*destroy_data)(void *)) {
 	if (destroy_data != NULL) {
 		destroy_data(bk->data);
 	}
-	delete_bucket(bk);
+	delete_bucket(blist, bk);
 	blist->size--;
 }
 
@@ -213,7 +220,7 @@ void delete_hashmap(HashMap *hm, void(*destroy_data)(void *)) {
 				destroy_data(bk->data);
 			}
 			temp = bk->next;
-			delete_bucket(bk);
+			delete_bucket(hm->elements[i], bk);
 			bk = temp;
 		}
 	}
