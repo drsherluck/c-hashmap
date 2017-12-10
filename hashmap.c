@@ -51,7 +51,7 @@ bucket * create_bucket(const char * key, void * data) {
 */
 bucket_list * get_bucket_list(HashMap *hm, const char * key) {
 	unsigned int h = hm->hash(key) % hm->key_space;
-	return bucket *bk = hm->elements[h]
+	return hm->elements[h];
 }
 
 /**
@@ -173,6 +173,9 @@ void delete_hashmap(HashMap *hm, void(*destroy_data)(void *)) {
 	if (hm == NULL) {
 		return;
 	}
+
+	bucket_list *blist = get_bucket_list(hm, key);
+	bucket *bk = get_bucket(blist, key);
 
 	bucket *temp = NULL;
 	for (unsigned int i = 0; i < hm->key_space; i++) {
