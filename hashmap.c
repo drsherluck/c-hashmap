@@ -28,7 +28,7 @@ HashMap * create_hashmap(size_t key_space) {
 	hm->hash = &hash;
 	hm->size = 0;
 	// initialize key_space amount of elements and sets them to 0 or NULL.
-	hm->elements = (bucket_list *)calloc(key_space, sizeof(bucket_list));
+	hm->elements = calloc(key_space, sizeof(bucket_list));
 	return hm;
 }
 
@@ -105,7 +105,7 @@ void delete_bucket(bucket_list *blist, bucket *bk) {
 		blist->head = bk->next;
 	}
 	if (blist->tail == bk) {
-		blist->tail == bk->prev;
+		blist->tail = bk->prev;
 	}
 
 	free(bk->key);
