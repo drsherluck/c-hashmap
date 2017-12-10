@@ -141,6 +141,7 @@ void insert_data(HashMap *hm, const char *key, void *data, void *(*resolve_colli
 		bk = create_bucket(key, data);
 		insert_bucket(blist, bk);
 		blist->size++;
+		hm->size++;
 	} else if (resolve_collision != NULL) {
 		bk->data = resolve_collision(bk->data, data);
 	}
@@ -169,7 +170,7 @@ void * get_data(HashMap *hm, const char *key) {
 	Iterator for HashMap *hm.
 */
 void iterate(HashMap *hm, void(*callback)(const char *, void *)) {
-	if (hm == NULL || hm->size == 0 || callback == NULL) {
+	if (hm == NULL || hm->size <= 0 || callback == NULL) {
 		return;
 	}
 	bucket *bk = NULL;
@@ -204,6 +205,7 @@ void remove_data(HashMap *hm, const char *key, void(*destroy_data)(void *)) {
 	}
 	delete_bucket(blist, bk);
 	blist->size--;
+	hm->size--;
 }
 
 /**
