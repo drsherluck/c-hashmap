@@ -93,19 +93,16 @@ void delete_bucket(bucket_list *blist, bucket *bk) {
 	bucket *next = bk->next;
 
 	if (next == NULL && prev != NULL) {
+		prev->next = NULL;
+		blist->tail = prev;
+	} 
+	if (prev == NULL && next != NULL) {
+		next->prev = NULL;
+		blist->head = next;
+	} 
+	if (prev != NULL && next != NULL) {
 		prev->next = next;
-	} else if (prev == NULL && next != NULL) {
 		next->prev = prev;
-	} else if (prev != NULL && next != NULL) {
-		prev->next = next;
-		next->prev = prev;
-	}
-
-	if (blist->head == bk) {
-		blist->head = bk->next;
-	}
-	if (blist->tail == bk) {
-		blist->tail = bk->prev;
 	}
 
 	free(bk->key);
