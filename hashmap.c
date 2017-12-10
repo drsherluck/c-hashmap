@@ -47,11 +47,24 @@ bucket * create_bucket(const char * key, void * data) {
 }
 
 /**
+*/
+bucket_list * create_bucketlist() {
+	bucket_list *blist = (bucket_list *)malloc( sizeof (bucket_list) );
+	blist->head = NULL;
+	blist->size = 0;
+	return bucket_list;
+}
+
+/**
 	Returns the bucket_list that should contain bucket with key.
 */
 bucket_list * get_bucket_list(HashMap *hm, const char * key) {
 	unsigned int h = hm->hash(key) % hm->key_space;
-	return hm->elements[h];
+	bucket_list *blist = hm->elements[h];
+	if (blist == NULL) {
+		blist = create_bucketlist();
+	}
+	return blist;
 }
 
 /**
