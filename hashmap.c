@@ -28,8 +28,65 @@ HashMap * create_hashmap(size_t key_space) {
 	hm->hash = &hash;
 	hm->size = 0;
 	// initialize key_space amount of elements and sets them to 0 or NULL.
-	hm->elements = (bucket *)calloc(key_space, sizeof(bucket));
+	hm->elements = (bucket *)calloc(key_space, sizeof(bucket_list));
 	return hm;
+}
+
+/**
+	creates a bucket.
+	@param key is the bucket key
+	@param data is the data it need to hold.
+*/
+bucket * create_bucket(const char * key, void * data) {
+	bucket *bk = (bucket *)malloc( sizeof (bucket) );
+	bk->key = (char *) strndup(key, strlen(key) + 1);
+	bk->data = data;
+	bk->prev = NULL;
+	bk->next = NULL;
+	return bk;
+}
+
+/**
+	Returns the bucket_list that should contain bucket with key.
+*/
+bucket_list * get_bucket_list(HashMap *hm, const char * key) {
+	unsigned int h = hm->hash(key) % hm->key_space;
+	return bucket *bk = hm->elements[h]
+}
+
+/**
+	Returns a bucket with the given key.
+	return NULL if that bucket is not available.
+*/
+bucket * get_bucket(bucket_list *blist, const char * key) {
+	bucket *bk = blist->head;
+	while(bk != NULL) {
+		if (strcmp(bk->key, key) == 0) {
+			return bk;
+		}
+		bk = bk->next;
+	}
+	return NULL;
+}
+
+/**
+	Deletes a bucket.
+*/
+void delete_bucket(bucket *bk) {
+	bucket *prev = bk->prev;
+	bucket *next = bk->next;
+
+	if (next == NULL) {
+		prev->next = next;
+	} else if (prev == NULL) {
+		next->prev = prev;
+	} else if (prev != NULL && next != NULL) {
+		prev->next = next;
+		next->prev = prev;
+	}
+
+	free(bk->key);
+	free(bk);
 }
 
 /**
@@ -42,28 +99,16 @@ void insert_data(HashMap *hm, const char *key, void *data, void *(*resolve_colli
 		return;
 	}
 
-	unsigned int h = hm->hash(key) % hm->key_space;
+	bucket_list *blist = get_bucket_list(hm, key);
+	bucket *bk = get_bucket(blist, key);
 
-	if ( hm->elements[h].has_data ) {
-		if (resolve_collision == NULL)
-			return;
-		free(hm->elements[h].key);
-		hm->elements[h].data = resolve_collision(hm->elements[h].data, data);
-	} else {
-		hm->elements[h].has_data = 1;
-		hm->elements[h].data = data;
-		hm->size++;
+	if (bk == NULL) {
+		bk = create_bucket(key, data);
+		blist->size++;
+	} else if (resolve_collision != NULL) {
+		bk->data = resolve_collision(bk->data, data);
 	}
-	hm->elements[h].key = (char *) strndup(key, strlen(key) + 1);
-} 
 
-/**
-	Determines what data is stored in the hashmap in case of
-	a key collision by returning the void pointer to the data
-	that is to be stored.
-*/
-void * ResolveCollisionCallback(void *old_data, void* new_data) {
-	return new_data;
 }
 
 /**
@@ -73,8 +118,14 @@ void * get_data(HashMap *hm, const char *key) {
 	if (hm == NULL || hm->key_space <= 0) {
 		return NULL;
 	}
-	unsigned int h = hm->hash(key) % hm->key_space;
-	return hm->elements[h].data;
+
+	bucket_list *blist = get_bucket_list(hm, key);
+	bucket *bk = get_bucket(blist, key);
+
+	if (bk == NULL) {
+		return NULL;
+	}
+	return bk->data;
 }
 
 
@@ -85,10 +136,12 @@ void iterate(HashMap *hm, void(*callback)(const char *, void *)) {
 	if (hm == NULL || hm->size == 0 || callback == NULL) {
 		return;
 	}
+	bucket *bk = NULL;
 	for (unsigned int i = 0; i < hm->key_space; i++) {
-		if (hm->elements[i].has_data) {
-			assert(i == get_index(hm, hm->elements[i].key));
-			callback(hm->elements[i].key, hm->elements[i].data);		
+		bk = hm->elements[i].head;
+		while (bk != NULL) {
+			callback(bk->key, bk->data);	
+			bk = bk->next;
 		}
 	}
 }
@@ -100,18 +153,17 @@ void remove_data(HashMap *hm, const char *key, void(*destroy_data)(void *)) {
 	if (hm == NULL || hm->key_space <= 0) {
 		return;
 	}
-	unsigned int h = hm->hash(key) % hm->key_space;
-	if (!hm->elements[h].has_data) {
+
+	bucket_list *blist = get_bucket_list(hm, key);
+	bucket *bk = get_bucket(blist, key);
+	if (bk == NULL) {
 		return;
 	}
-	free(hm->elements[h].key);
-	if (destroy_data == NULL) {
-		hm->elements[h].data = NULL;
-	} else {
-		destroy_data(hm->elements[h].data);
+	if (destroy_data != NULL) {
+		destroy_data(bk->data);
 	}
-	hm->elements[h].has_data = 0;
-	hm->size--; // decrease size;
+	delete_bucket(bk);
+	blist->size--;
 }
 
 /**
@@ -122,41 +174,21 @@ void delete_hashmap(HashMap *hm, void(*destroy_data)(void *)) {
 		return;
 	}
 
+	bucket *temp = NULL;
 	for (unsigned int i = 0; i < hm->key_space; i++) {
-		if (destroy_data != NULL) {
-			destroy_data(hm->elements[i].data);
-		}
-		if (hm->elements[i].has_data) {
-			free(hm->elements[i].key);
-			hm->elements[i].data = NULL;
-			hm->size--;
-			hm->elements[i].has_data = 0;
+		bk = hm->elements[i].head;
+		while (bk != NULL) {
+			if (destroy_data != NULL) {
+				destroy_data(bk->data);
+			}
+			temp = bk->next;
+			delete_bucket(bk);
+			bk = temp;
 		}
 	}
 
 	free(hm->elements);
 	free(hm);
-}
- 
-/**
-	Callback function used in remove_data when deleting data 
-	from the HashMap.
-*/
-void DestroyDataCallback(void *data) {
-	if (data != NULL) {
-		free(data);
-	}
-}
-
-/**
-	Returns the index of a given key using the hashing function
-	of HashMap hm.
-*/
-unsigned int get_index(HashMap *hm, const char * key) {
-	if (hm == NULL) {
-		return 0;
-	}
-	return hm->hash(key) % hm->key_space;
 }
 
 /** BONUS PART **/
