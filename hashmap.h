@@ -9,8 +9,8 @@
 typedef struct bucket {
 	void * data;
 	char * key;
-	bucket * next;
-	bucket * prev;
+	struct bucket * next;
+	struct bucket * prev;
 } bucket;
 
 /**
