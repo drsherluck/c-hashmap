@@ -257,6 +257,7 @@ void rehash(HashMap *hm) {
 	hm->size = 0;
 
 	bucket *bk = NULL;
+	bucket *temp = NULL;
 	for (unsigned int i = 0; i < hm->key_space; i++) {
 		if (old[i] == NULL) {
 			continue;
@@ -264,9 +265,12 @@ void rehash(HashMap *hm) {
 		bk = old[i]->head;
 		while (bk != NULL) {
 			insert_data(hm, bk->key, bk->data, NULL);
+			temp = bk->next;
 			free(bk->key);
-			bk = bk->next;
+			free(bk)
+			bk = temp;
 		}
+		free(old[i]->head);
 	}
 	free(old);
 }
