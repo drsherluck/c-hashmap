@@ -267,7 +267,6 @@ void rehash(HashMap *hm) {
 			insert_data(hm, bk->key, bk->data, NULL);
 			t_bk = bk->next;
 			free(bk->key);
-			free(bk);
 			bk = t_bk;
 		}
 		free(old[i]->head);
