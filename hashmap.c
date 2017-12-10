@@ -103,7 +103,7 @@ void delete_bucket(bucket *bk) {
 	free(bk);
 }
 
-void insert_bucket(bucket_list *blist, bucket * bk) {
+void insert_bucket(bucket_list * blist, bucket * bk) {
 	if (blist->head == NULL) {
 		blist->head = bk;
 		blist->tail = bk;
