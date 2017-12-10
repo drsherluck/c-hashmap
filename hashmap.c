@@ -49,7 +49,7 @@ bucket * create_bucket(const char * key, void * data) {
 /**
 */
 bucket_list * create_bucketlist() {
-	bucket_list *blist = (bucket_list *)malloc( sizeof (bucket_list) );
+	bucket_list *blist = (bucket_list *)malloc( sizeof(bucket_list) );
 	blist->head = NULL;
 	blist->tail = NULL;
 	blist->size = 0;
@@ -230,7 +230,7 @@ void delete_hashmap(HashMap *hm, void(*destroy_data)(void *)) {
 				destroy_data(bk->data);
 			}
 			temp = bk->next;
-			delete_bucket(hm->elements[i], bk);
+			delete_bucket(blist, bk);
 			bk = temp;
 		}
 		free(blist);
