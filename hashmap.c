@@ -116,14 +116,12 @@ void delete_bucket(bucket_list *blist, bucket *bk) {
 }
 
 void insert_bucket(bucket_list * blist, bucket * bk) {
-	if (blist->head == NULL) {
+	if (blist->size == 0) {
 		blist->head = bk;
 		blist->tail = bk;
 	} else {
-		bucket *temp = blist->tail;
-		temp->next = bk;
-		bk->prev = temp;
-		bk->next = NULL;
+		bk->prev = blist->tail;
+		blist->next = bk;
 	}
 }
 
