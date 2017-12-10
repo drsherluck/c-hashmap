@@ -214,6 +214,9 @@ void delete_hashmap(HashMap *hm, void(*destroy_data)(void *)) {
 	bucket *bk = NULL;
 	bucket *temp = NULL;
 	for (unsigned int i = 0; i < hm->key_space; i++) {
+		if (hm->elements[i] == NULL) {
+			continue;
+		}
 		bk = hm->elements[i]->head;
 		while (bk != NULL) {
 			if (destroy_data != NULL) {
