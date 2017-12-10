@@ -259,7 +259,7 @@ void rehash(HashMap *hm) {
 		}
 	}
 
-	delete_hashmap(old);
+	delete_hashmap(old, NULL);
 }
 
 /**
