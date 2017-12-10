@@ -19,6 +19,7 @@ typedef struct bucket {
 typedef struct bucket_list {
 	int size;
 	bucket * head;
+	bucket * tail;
 } bucket_list;
 
 /**

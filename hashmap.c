@@ -51,6 +51,7 @@ bucket * create_bucket(const char * key, void * data) {
 bucket_list * create_bucketlist() {
 	bucket_list *blist = (bucket_list *)malloc( sizeof (bucket_list) );
 	blist->head = NULL;
+	blist->tail = NULL;
 	blist->size = 0;
 	return blist;
 }
@@ -102,6 +103,18 @@ void delete_bucket(bucket *bk) {
 	free(bk);
 }
 
+void insert_bucket(bucket_list *blist, bucket * bk) {
+	if (blist->head == NULL) {
+		blist->head = bk;
+		blist->tail = bk;
+	} else {
+		bucket *temp = blist->tail;
+		temp->next = bk;
+		bk->prev = temp;
+		bk->next = NULL;
+	}
+}
+
 /**
 	Store the data pointer and copy of the key in the bucket
 	in the HashMap *hm, resolve_collision is called in case of
@@ -117,6 +130,7 @@ void insert_data(HashMap *hm, const char *key, void *data, void *(*resolve_colli
 
 	if (bk == NULL) {
 		bk = create_bucket(key, data);
+		insert_bucket(blist, bk);
 		blist->size++;
 	} else if (resolve_collision != NULL) {
 		bk->data = resolve_collision(bk->data, data);
