@@ -247,24 +247,24 @@ void rehash(HashMap *hm) {
 		return;
 	}
 
-	HashMap *temp = create_hashmap(hm->key_space);
-	HashMap *old = hm;
-	hm = temp;
-	hm->hash = old->hash;
+	bucket_list *(*temp) = calloc(hm->key_space, sizeof(bucket_list) );
+	bucket_list *(*old) = hm->elements;
+	hm->elements = temp;
+	hm->size = 0;
 
 	bucket *bk = NULL;
-	for (unsigned int i = 0; i < old->key_space; i++) {
-		if (old->elements[i] == NULL) {
+	for (unsigned int i = 0; i < hm->key_space; i++) {
+		if (old[i] == NULL) {
 			continue;
 		}
-		bk = old->elements[i]->head;
+		bk = old[i]->head;
 		while (bk != NULL) {
 			insert_data(hm, bk->key, bk->data, NULL);
+			free(bk->key);
 			bk = bk->next;
 		}
 	}
-
-	delete_hashmap(old, NULL);
+	free(old);
 }
 
 /**
