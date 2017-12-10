@@ -174,6 +174,9 @@ void iterate(HashMap *hm, void(*callback)(const char *, void *)) {
 	}
 	bucket *bk = NULL;
 	for (unsigned int i = 0; i < hm->key_space; i++) {
+		if (hm->elements[i] == NULL) {
+			continue;
+		} 
 		bk = hm->elements[i]->head;
 		while (bk != NULL) {
 			callback(bk->key, bk->data);	
