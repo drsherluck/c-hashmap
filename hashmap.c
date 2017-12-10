@@ -92,18 +92,22 @@ void delete_bucket(bucket_list *blist, bucket *bk) {
 	bucket *prev = bk->prev;
 	bucket *next = bk->next;
 
+	// if its the last entry
 	if (prev == NULL && next == NULL) {
 		blist->tail = NULL;
 		blist->head = NULL;
 	} else {
+		// if its the tail
 		if (prev != NULL && next == NULL) {
 			prev->next = NULL;
 			blist->tail = prev;
 		} 
+		// if its the head.
 		if (next != NULL && prev == NULL) {
 			next->prev = NULL;
 			blist->head = next;
 		}
+		// if its in the middle.
 		if (next != NULL && prev != NULL) {
 			next->prev = prev;
 			prev->next = next;
@@ -117,9 +121,11 @@ void delete_bucket(bucket_list *blist, bucket *bk) {
 
 void insert_bucket(bucket_list * blist, bucket * bk) {
 	if (blist->size == 0) {
+		// if first entry.
 		blist->head = bk;
 		blist->tail = bk;
 	} else {
+		// add to the end of the list
 		bk->prev = blist->tail;
 		blist->tail->next = bk;
 		blist->tail = bk;
@@ -182,7 +188,7 @@ void iterate(HashMap *hm, void(*callback)(const char *, void *)) {
 		} 
 		bk = hm->elements[i]->head;
 		while (bk != NULL) {
-			callback(bk->key, bk->data);	
+			callback(bk->key, bk->data); // call use function
 			bk = bk->next;
 		}
 	}
@@ -266,12 +272,15 @@ void rehash(HashMap *hm) {
 		while (bk != NULL) {
 			insert_data(hm, bk->key, bk->data, NULL);
 			t_bk = bk->next;
+			// free memory of the old bucket
 			free(bk->key);
 			free(bk);
 			bk = t_bk;
 		}
+		// free the bucket_list[i]
 		free(old[i]);
 	}
+	// free the buckit_list.
 	free(old);
 }
 
@@ -283,7 +292,7 @@ void set_hash_function(HashMap *hm, unsigned int (*hash_function)(const char *))
 		return;
 	}
 	hm->hash = hash_function;
-	rehash(hm);
+	rehash(hm); 
 }
 
 /**

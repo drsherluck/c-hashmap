@@ -36,14 +36,6 @@ int main() {
 	const char * key_3    = "ad";
 	const char * key_4    = "xy";
 
-	insert_data(hm, key_1, string_1, resolve_collision);
-	insert_data(hm, key_2, string_2, resolve_collision);
-	insert_data(hm, key_3, string_3, resolve_collision);
-
-	remove_data(hm, key_2, NULL);
-	remove_data(hm, key_1, NULL);
-	remove_data(hm, key_3, NULL);
-
 	// Insert ("ab" -> "TI2725-C").
 	insert_data(hm, key_1, string_1, resolve_collision);
 	assert(memcmp(get_data(hm, key_1), string_1, mystrlen(string_1)) == 0);
