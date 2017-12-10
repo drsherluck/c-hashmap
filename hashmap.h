@@ -28,7 +28,7 @@ typedef struct HashMap {
 	size_t key_space;
 	int size;
 	unsigned int (*hash)(const char *);
-	bucket_list * elements;
+	bucket_list *(*elements);
 } HashMap;
 
 
@@ -43,7 +43,7 @@ void delete_hashmap(HashMap *hm, void(*destroy_data)(void *));
 #endif
 
 #ifndef NEW_HASH
-#define NEW_HASH
+
 
 void set_hash_function(HashMap *hm, unsigned int (*hash_function)(const char *));
 

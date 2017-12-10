@@ -138,7 +138,7 @@ void iterate(HashMap *hm, void(*callback)(const char *, void *)) {
 	}
 	bucket *bk = NULL;
 	for (unsigned int i = 0; i < hm->key_space; i++) {
-		bk = hm->elements[i].head;
+		bk = hm->elements[i]->head;
 		while (bk != NULL) {
 			callback(bk->key, bk->data);	
 			bk = bk->next;
@@ -177,7 +177,7 @@ void delete_hashmap(HashMap *hm, void(*destroy_data)(void *)) {
 	bucket *bk = NULL;
 	bucket *temp = NULL;
 	for (unsigned int i = 0; i < hm->key_space; i++) {
-		bk = hm->elements[i].head;
+		bk = hm->elements[i]->head;
 		while (bk != NULL) {
 			if (destroy_data != NULL) {
 				destroy_data(bk->data);
