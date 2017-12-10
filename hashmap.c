@@ -218,11 +218,13 @@ void delete_hashmap(HashMap *hm, void(*destroy_data)(void *)) {
 
 	bucket *bk = NULL;
 	bucket *temp = NULL;
+	bucket_list *blist = NULL;
 	for (unsigned int i = 0; i < hm->key_space; i++) {
-		if (hm->elements[i] == NULL) {
+		blist = hm->elements[i];
+		if (blist == NULL) {
 			continue;
 		}
-		bk = hm->elements[i]->head;
+		bk = blist->head;
 		while (bk != NULL) {
 			if (destroy_data != NULL) {
 				destroy_data(bk->data);
@@ -231,6 +233,7 @@ void delete_hashmap(HashMap *hm, void(*destroy_data)(void *)) {
 			delete_bucket(hm->elements[i], bk);
 			bk = temp;
 		}
+		free(blist);
 	}
 
 	free(hm->elements);
