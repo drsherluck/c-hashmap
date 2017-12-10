@@ -52,7 +52,7 @@ bucket_list * create_bucketlist() {
 	bucket_list *blist = (bucket_list *)malloc( sizeof (bucket_list) );
 	blist->head = NULL;
 	blist->size = 0;
-	return bucket_list;
+	return blist;
 }
 
 /**
