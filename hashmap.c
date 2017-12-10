@@ -253,11 +253,11 @@ void rehash(HashMap *hm) {
 	hm->hash = old->hash;
 
 	bucket *bk = NULL;
-	for (unsigned int i = 0; i < hm->key_space; i++) {
-		if (hm->elements[i] == NULL) {
+	for (unsigned int i = 0; i < old->key_space; i++) {
+		if (old->elements[i] == NULL) {
 			continue;
 		}
-		bk = hm->elements[i]->head;
+		bk = old->elements[i]->head;
 		while (bk != NULL) {
 			insert_data(hm, bk->key, bk->data, NULL);
 			bk = bk->next;
