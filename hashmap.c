@@ -269,7 +269,7 @@ void rehash(HashMap *hm) {
 			free(bk->key);
 			bk = t_bk;
 		}
-		free(old[i]->head);
+		free(old[i]);
 	}
 	free(old);
 }
