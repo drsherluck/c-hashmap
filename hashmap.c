@@ -72,6 +72,9 @@ bucket_list * get_bucket_list(HashMap *hm, const char * key) {
 	return NULL if that bucket is not available.
 */
 bucket * get_bucket(bucket_list *blist, const char * key) {
+	if (blist == NULL) {
+		return NULL;
+	}
 	bucket *bk = blist->head;
 	while(bk != NULL) {
 		if (strcmp(bk->key, key) == 0) {
@@ -89,9 +92,9 @@ void delete_bucket(bucket *bk) {
 	bucket *prev = bk->prev;
 	bucket *next = bk->next;
 
-	if (next == NULL) {
+	if (next == NULL && prev != NULL) {
 		prev->next = next;
-	} else if (prev == NULL) {
+	} else if (prev == NULL && next != NULL) {
 		next->prev = prev;
 	} else if (prev != NULL && next != NULL) {
 		prev->next = next;
@@ -182,6 +185,7 @@ void remove_data(HashMap *hm, const char *key, void(*destroy_data)(void *)) {
 
 	bucket_list *blist = get_bucket_list(hm, key);
 	bucket *bk = get_bucket(blist, key);
+
 	if (bk == NULL) {
 		return;
 	}
