@@ -8,25 +8,30 @@
 #include "wordcount.h"
 #endif
 
-size_t mystrlen(const char *str) {
+size_t mystrlen(const char *str) 
+{
     return strlen(str) + 1;
 }
 
-void print_element(const char *key, void *data) {
+void print_element(const char *key, void *data) 
+{
 	printf("(\"%s\", %s)\n", key, (char*)data);
 }
 
-void *resolve_collision(void *old_value, void *new_value) {
+void *resolve_collision(void *old_value, void *new_value) 
+{
 	return new_value;
 }
 
-unsigned your_own_hash(const char *key) {
+unsigned your_own_hash(const char *key) 
+{
 	return (unsigned) strlen(key) + (unsigned) *key;
 }
 
-int main() {
-	unsigned int key_space = 1024;
-	HashMap * hm = create_hashmap(key_space);
+int main() 
+{
+	uint32_t key_space = 1024;
+	hashmap_t * hm = create_hashmap(key_space);
 
 	char * string_1 = "TI2725-C";
 	char * string_2 = "Embedded";
@@ -102,7 +107,7 @@ int main() {
 #endif
 
 	hm = create_hashmap(key_space);
-	unsigned int space = 32;
+	uint32_t space = 32;
 
 	char * allocated_key = (char *)malloc(space);
 	char * allocated_data = (char *)malloc(space);
@@ -136,10 +141,7 @@ int main() {
 */
 	delete_hashmap(hm, NULL);
 
-
-
 	free(allocated_key);
 	free(allocated_data);
-
 	return 0;
 }
