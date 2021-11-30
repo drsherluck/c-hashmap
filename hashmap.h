@@ -14,26 +14,26 @@ typedef void* (*resolve_collision_t)(void*, void*);
 
 typedef struct bucket 
 {
-	void          *data;
-	char          *key;
-	struct bucket *next;
-	struct bucket *prev;
+    void          *data;
+    char          *key;
+    struct bucket *next;
+    struct bucket *prev;
 } bucket;
 
 // linked list of buckets
 typedef struct bucket_list 
 {
-	size_t   size;
-	bucket   *head;
-	bucket   *tail;
+    size_t   size;
+    bucket   *head;
+    bucket   *tail;
 } bucket_list;
 
 typedef struct hashmap_t 
 {
-	uint32_t         key_space;
-	int32_t          size;
-	hash_function_t  hash;
-	bucket_list      *(*elements);
+    uint32_t         key_space;
+    int32_t          size;
+    hash_function_t  hash;
+    bucket_list      *(*elements);
 } hashmap_t;
 
 
