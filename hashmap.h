@@ -38,7 +38,7 @@ typedef struct hashmap_t
 
 
 uint32_t   hash(const char* key);
-hashmap_t* create_hashmap(size_t key_space);
+hashmap_t* create_hashmap(uint32_t key_space);
 void       insert_data(hashmap_t *hm, const char *key, void *data, resolve_collision_t resolve_collision);
 void       remove_data(hashmap_t *hm, const char *key, destroy_data_t destroy_data);
 void*      get_data(hashmap_t *hm, const char *key);

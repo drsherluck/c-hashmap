@@ -27,7 +27,7 @@ uint32_t hash(const char *key)
  * returns a pointer to the hashmap_t.
  */
 hashmap_t* 
-create_hashmap(size_t key_space) 
+create_hashmap(uint32_t key_space) 
 {
 	hashmap_t *hm = malloc(sizeof(hashmap_t));
 	hm->key_space = key_space;
@@ -105,7 +105,7 @@ get_bucket(bucket_list* blist, const char* key)
 	Deletes a bucket.
 */
 void 
-delete_bucket(bucket_list *blist, bucket *bk) 
+delete_bucket(bucket_list *blist, bucket *bk, destroy_data_t destroy_data) 
 {
 	bucket *prev = bk->prev;
 	bucket *next = bk->next;
@@ -139,6 +139,10 @@ delete_bucket(bucket_list *blist, bucket *bk)
 	}
 
 	blist->size--;
+    if (destroy_data != NULL) 
+    {
+        destroy_data(bk->data);
+    }
 	free(bk->key);
 	free(bk);
 }
@@ -239,11 +243,7 @@ void remove_data(hashmap_t *hm, const char *key, destroy_data_t destroy_data)
 
 	if (bk != NULL) 
     {
-        if (destroy_data != NULL) 
-        {
-            destroy_data(bk->data);
-        }
-        delete_bucket(blist, bk);
+        delete_bucket(blist, bk, destroy_data);
         hm->size--;
     }
 }
@@ -268,12 +268,8 @@ void delete_hashmap(hashmap_t *hm, destroy_data_t destroy_data)
 		bk = blist->head;
 		while (bk != NULL) 
         {
-			if (destroy_data != NULL) 
-            {
-				destroy_data(bk->data);
-			}
 			temp = bk->next;
-			delete_bucket(blist, bk);
+			delete_bucket(blist, bk, destroy_data);
 			bk = temp;
 		}
 		free(blist);
@@ -326,7 +322,3 @@ void set_hash_function(hashmap_t *hm, hash_function_t hash_function)
 	rehash(hm); 
 }
 
-/*Counts how many times a word is in a file.*/
-void count_words(FILE * stream) {
-
-}
