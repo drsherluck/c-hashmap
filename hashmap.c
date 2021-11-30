@@ -6,7 +6,6 @@
 #include <string.h>
 #include <assert.h> 
 
-
 /*
  * Default hashing function.
  * @param  A character list to be hashed
@@ -33,7 +32,6 @@ create_hashmap(uint32_t key_space)
 	hm->key_space = key_space;
 	hm->hash = &hash;
 	hm->size = 0;
-	// initialize key_space amount of elements and sets them to 0 or NULL.
 	hm->elements = calloc(key_space, sizeof(bucket_list));
 	return hm;
 }
@@ -101,42 +99,39 @@ get_bucket(bucket_list* blist, const char* key)
 	return NULL;
 }
 
-/**
-	Deletes a bucket.
-*/
+/*
+ * Removes a bucket from the linked list
+ */
 void 
 delete_bucket(bucket_list *blist, bucket *bk, destroy_data_t destroy_data) 
 {
 	bucket *prev = bk->prev;
 	bucket *next = bk->next;
 
-	// if its the last entry
-	if (prev == NULL && next == NULL) 
+	// only element
+	if (!prev && !next) 
     {
 		blist->tail = NULL;
 		blist->head = NULL;
-	} 
-    else 
+	} 	
+    // tail element
+    else if (prev && !next) 
     {
-		// its the tail
-		if (prev != NULL && next == NULL) 
-        {
-			prev->next = NULL;
-			blist->tail = prev;
-		} 
-		// if its the head.
-		if (next != NULL && prev == NULL) 
-        {
-			next->prev = NULL;
-			blist->head = next;
-		}
-		// if its in the middle.
-		if (next != NULL && prev != NULL) 
-        {
-			next->prev = prev;
-			prev->next = next;
-		}
-	}
+        prev->next = NULL;
+        blist->tail = prev;
+    } 
+    // head element
+	else if (next && !prev) 
+    {
+        next->prev = NULL;
+        blist->head = next;
+    }
+    // middle element
+	else if (next && prev) 
+    {
+        next->prev = prev;
+        prev->next = next;
+    }
 
 	blist->size--;
     if (destroy_data != NULL) 
@@ -249,7 +244,7 @@ void remove_data(hashmap_t *hm, const char *key, destroy_data_t destroy_data)
 }
 
 /*
- * Deletes the entire hashmap_t *hm.
+ * Deletes the entire hashmap
  */
 void delete_hashmap(hashmap_t *hm, destroy_data_t destroy_data) 
 {
